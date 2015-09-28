@@ -1,16 +1,53 @@
 package etbrady.todo;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import etbrady.todo.models.Chore;
 
 public class MainActivity extends AppCompatActivity {
+
+    List<Chore> chores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        chores = new ArrayList<>();
+    }
+
+    private void createChore() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("New Chore");
+        LayoutInflater inflater = getLayoutInflater();
+        final View view = inflater.inflate(R.layout.alertdialog_newchore, null, false);
+        builder.setView(view);
+
+        builder.setPositiveButton("Create Chore", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EditText editText = (EditText) view.findViewById(R.id.edittext_title);
+                String title = editText.getText().toString();
+                Chore chore = new Chore(title);
+                chores.add(chore);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+
+        builder.create().show();
     }
 
     @Override
@@ -30,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if(id == R.id.action_newChore) {
+            createChore();
         }
 
         return super.onOptionsItemSelected(item);
